@@ -7,6 +7,6 @@ import {
 const router = express.Router();
 
 router.get('/search-code', searchCodeTurboCars);
-router.get('/new-supplier/search-code', searchCodeUG);
+router.get('/ug/search-code', searchCodeUG);
 
 export default router;
