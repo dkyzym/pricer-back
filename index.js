@@ -7,7 +7,6 @@ import morgan from 'morgan';
 import { RouteNotFoundError } from './utils/errors.js';
 import authRoutes from './routes/auth.js';
 import dataRoutes from './routes/data.js';
-import axios from 'axios';
 
 const app = express();
 
@@ -28,39 +27,10 @@ app.use(express.json());
 app.use('/', authRoutes);
 app.use('/', dataRoutes);
 
-const clientNumberTurboCars = '32831';
-
-app.get('/check-login', async (req, res) => {
-  try {
-    const cookies = JSON.parse(req.cookies.cookies || '[]');
-
-    const response = await axios.get(
-      'https://turbo-cars.net/office/zakaz.asp',
-      {
-        headers: {
-          Cookie: cookies.join('; '),
-        },
-      }
-    );
-    const notLogIn = await response.data.includes(clientNumberTurboCars);
-
-    // Проверка, есть ли содержимое в ответе
-    if (!notLogIn) {
-      throw new Error('Not logged in');
-    }
-
-    res.json({ loggedIn: true, data: response.data });
-  } catch (error) {
-    console.error('Turbocars Check login error:', error.message);
-    res.status(500).json({ loggedIn: false, message: 'Not logged in' });
-  }
-});
-
 app.use(() => {
   throw new RouteNotFoundError();
 });
 
-// Errors handler
 app.use(error);
 
 const start = async () => {

@@ -15,7 +15,6 @@ export const loginToTurboCarsService = async (username, password) => {
   );
 
   const decodedResponse = iconv.decode(response.data, 'windows-1251');
-  console.log('Response Data:', decodedResponse);
 
   const cookies = parseSetCookieHeader(response.headers['set-cookie']);
   return cookies;
