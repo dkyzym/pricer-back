@@ -1,6 +1,7 @@
 import axios from 'axios';
-import iconv from 'iconv-lite';
+
 import { parseSetCookieHeader } from '../utils/cookieUtils.js';
+import { Credentials } from '../utils/constants.js';
 
 export const loginToTurboCarsService = async (username, password) => {
   const response = await axios.post(
@@ -14,7 +15,7 @@ export const loginToTurboCarsService = async (username, password) => {
     }
   );
 
-  const decodedResponse = iconv.decode(response.data, 'windows-1251');
+  // checkIsLoggedIn(response?.data, Credentials.TurboCarsUserID);
 
   const cookies = parseSetCookieHeader(response.headers['set-cookie']);
   return cookies;
@@ -22,14 +23,17 @@ export const loginToTurboCarsService = async (username, password) => {
 
 export const loginToUGService = async (username, password) => {
   const response = await axios.post(
-    'https://new-supplier.com/login',
-    { username, password },
+    'https://ugautopart.ru/',
+    `login=${encodeURIComponent(username)}&pass=${encodeURIComponent(password)}`,
     {
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
+      withCredentials: true,
     }
   );
+
+  // checkIsLoggedIn(response?.data, Credentials.UGID);
 
   const cookies = parseSetCookieHeader(response.headers['set-cookie']);
   return cookies;
