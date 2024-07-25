@@ -1,10 +1,12 @@
 import express from 'express';
-//const axios = require('axios');
+import {
+  searchCodeTurboCars,
+  searchCodeUG,
+} from '../controllers/dataController.js';
 
 const router = express.Router();
 
-router.get('/test', async (req, res) => {
-  res.status(200).json({ message: 'Hello from DATA' });
-});
+router.get('/search-code', searchCodeTurboCars);
+router.get('/new-supplier/search-code', searchCodeUG);
 
 export default router;

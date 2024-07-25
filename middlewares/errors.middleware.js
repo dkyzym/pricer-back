@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { BaseError } from '../helpers/errors.js';
+import { BaseError } from '../utils/errors.js';
 
 export const error = (error, _req, res, _next) => {
   console.log(chalk.red.italic(`${error.stack}`));

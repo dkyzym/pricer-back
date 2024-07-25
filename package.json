@@ -35,6 +35,7 @@
     "#constants/*": "./constants/*",
     "#routes/*": "./routes/*",
     "#controllers/*": "./controllers/*",
+    "#services/*": "./services/*",
     "#helpers/*": "./helpers/*",
     "#middlewares/*": "./middlewares/*",
     "#models/*": "./models/*",
