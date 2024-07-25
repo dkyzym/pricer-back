@@ -131,7 +131,7 @@ dist
 
 # additional
 notes.txt
-.vscode/
+.vscode
 
 # idea
 .idea
