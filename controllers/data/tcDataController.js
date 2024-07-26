@@ -1,4 +1,4 @@
-import { searchCodeTurboCarsService } from '#services/turboCarsService.js';
+import { searchCodeTCservice } from '#services/data/tсDataService.js';
 
 export const searchCodeTC = async (req, res) => {
   try {
@@ -9,7 +9,7 @@ export const searchCodeTC = async (req, res) => {
     }
 
     const cookies = JSON.parse(req.cookies.turboCarsCookies || '[]');
-    const data = await searchCodeTurboCarsService(code, cookies);
+    const data = await searchCodeTCservice(code, cookies);
 
     res.json({ success: true, data });
   } catch (error) {

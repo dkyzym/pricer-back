@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const searchUGService = async (term, locale, cookies) => {
+export const fastSearchUGservice = async (term, locale, cookies) => {
   try {
     const headers = {
       Cookie: cookies.join('; '),
@@ -27,7 +27,7 @@ export const searchUGService = async (term, locale, cookies) => {
 
     return response.data;
   } catch (error) {
-    console.error('Error in searchUGService:', error.message);
+    console.error('Error in fastSearchUGservice:', error.message);
     throw new Error('Failed to fetch data from UG Auto Parts');
   }
 };

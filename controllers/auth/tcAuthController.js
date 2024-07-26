@@ -1,7 +1,7 @@
 import {
   loginTCservice,
   logoutTCservice,
-} from '#services/auth/turboCarsAuthService.js';
+} from '#services/auth/tcAuthService.js';
 
 export const loginTC = async (req, res) => {
   try {

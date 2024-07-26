@@ -1,4 +1,4 @@
-import { searchUGService } from '#services/ugService.js';
+import { fastSearchUGservice } from '#services/data/ugFastSearchService.js';
 
 export const fastSearchUG = async (req, res) => {
   try {
@@ -12,7 +12,7 @@ export const fastSearchUG = async (req, res) => {
 
     const cookies = JSON.parse(req.cookies.ugCookies || '[]');
 
-    const data = await searchUGService(term, locale, cookies);
+    const data = await fastSearchUGservice(term, locale, cookies);
 
     res.json({ success: true, data });
   } catch (error) {

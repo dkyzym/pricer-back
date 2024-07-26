@@ -1,11 +1,10 @@
+import { checkIsLoggedIn } from '#utils/checkIsLoggedIn.js';
+import { Credentials } from '#utils/constants.js';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import iconv from 'iconv-lite';
-import { checkIsLoggedIn } from '../utils/checkIsLoggedIn.js';
 
-import { Credentials } from '../utils/constants.js';
-
-export const searchCodeTurboCarsService = async (code, cookies) => {
+export const searchCodeTCservice = async (code, cookies) => {
   const response = await axios.get(
     `https://turbo-cars.net/office/SearchCodeG.asp?CODE=${encodeURIComponent(code)}`,
     {
