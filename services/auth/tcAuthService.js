@@ -1,44 +1,27 @@
-import { parseSetCookieHeader } from '#utils/cookieUtils.js';
+import { defaultHeaders } from '#utils/defaultHeaders.js';
+import {
+  makePostRequest,
+  makeGetRequest,
+  getCookiesFromResponse,
+} from './commonAuthService.js';
+
+const TC_LOGIN_URL = 'https://turbo-cars.net/office/SECURE.asp';
+const TC_LOGOUT_URL = 'https://turbo-cars.net/office/login.asp?mode=new';
 
 export const loginTCservice = async (username, password) => {
-  const response = await axios.post(
-    'https://turbo-cars.net/office/SECURE.asp',
-    `CODE=${username}&PASSWORD=${password}`,
-    {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      responseType: 'arraybuffer',
-    }
-  );
+  const data = `CODE=${username}&PASSWORD=${password}`;
+  const headers = defaultHeaders;
 
-  const cookies = parseSetCookieHeader(response.headers['set-cookie']);
-  return cookies;
+  const response = await makePostRequest(TC_LOGIN_URL, data, headers);
+  return getCookiesFromResponse(response);
 };
 
 export const logoutTCservice = async (cookies) => {
-  try {
-    const response = await axios.get(
-      'https://turbo-cars.net/office/login.asp?mode=new',
-      {
-        headers: {
-          Cookie: cookies.join('; '),
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-        },
-        withCredentials: true,
-        responseType: 'arraybuffer',
-      }
-    );
+  const headers = {
+    Cookie: cookies.join('; '),
+    defaultHeaders,
+  };
 
-    if (response.status !== 200) {
-      throw new Error('Failed to log out');
-    }
-
-    return [];
-  } catch (error) {
-    console.error('Logout error:', error.message);
-    throw error;
-  }
+  const response = await makeGetRequest(TC_LOGOUT_URL, headers);
+  return [];
 };

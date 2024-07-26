@@ -1,46 +1,37 @@
-import { parseSetCookieHeader } from '#utils/cookieUtils.js';
+import { defaultHeaders } from '#utils/defaultHeaders.js';
+import {
+  makePostRequest,
+  makeGetRequest,
+  getCookiesFromResponse,
+} from './commonAuthService.js';
+
+const UG_LOGIN_URL = 'https://ugautopart.ru/';
+const UG_LOGOUT_URL = 'https://ugautopart.ru/?logout';
 
 export const loginUGservice = async (username, password) => {
-  const response = await axios.post(
-    'https://ugautopart.ru/',
-    `login=${encodeURIComponent(username)}&pass=${encodeURIComponent(password)}`,
-    {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      withCredentials: true,
-    }
-  );
+  const data = `login=${encodeURIComponent(username)}&pass=${encodeURIComponent(password)}`;
+  const headers = defaultHeaders;
 
-  const cookies = parseSetCookieHeader(response.headers['set-cookie']);
-  return cookies;
+  const response = await makePostRequest(UG_LOGIN_URL, data, headers);
+  return getCookiesFromResponse(response);
 };
 
 export const logoutUGservice = async (cookies) => {
-  try {
-    const response = await axios.get('https://ugautopart.ru/?logout', {
-      headers: {
-        Cookie: cookies.join('; '),
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-      },
-      withCredentials: true,
-    });
+  const headers = {
+    Cookie: cookies.join('; '),
+    defaultHeaders,
+  };
 
-    const setCookies = response.headers['set-cookie'] || [];
-    const isLoggedOut = setCookies.some((cookie) =>
-      cookie.includes('PHPSESSID=')
-    );
+  const response = await makeGetRequest(UG_LOGOUT_URL, headers);
+  const newCookies = getCookiesFromResponse(response);
 
-    if (!isLoggedOut) {
-      throw new Error('Failed to log out');
-    }
+  const isLoggedOut = newCookies.some((cookie) =>
+    cookie.includes('PHPSESSID=')
+  );
 
-    const newCookies = parseSetCookieHeader(setCookies);
-    return newCookies;
-  } catch (error) {
-    console.error('Logout error:', error.message);
-    throw error;
+  if (!isLoggedOut) {
+    throw new Error('Failed to log out');
   }
+
+  return newCookies;
 };
