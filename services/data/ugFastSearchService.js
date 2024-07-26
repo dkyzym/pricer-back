@@ -17,7 +17,7 @@ export const fastSearchUGservice = async (term, locale, cookies) => {
       'https://ugautopart.ru/ajax/modules2/search.tips/get',
       {
         params: {
-          term: encodeURIComponent(term),
+          term,
           locale,
         },
         headers: headers,
