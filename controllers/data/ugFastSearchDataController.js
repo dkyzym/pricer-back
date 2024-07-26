@@ -1,22 +1,14 @@
 import { fastSearchUGservice } from '#services/data/ugFastSearchService.js';
+import { checkEmptyField } from '#utils/validationHelpers.js';
+import { ctrlWrapper } from '#middlewares/ctrlWrapper.js';
 
-export const fastSearchUG = async (req, res) => {
-  try {
-    const { term, locale } = req.query;
+export const fastSearchUG = ctrlWrapper(async (req, res) => {
+  const { term, locale } = req.query;
 
-    if (!term.trim()) {
-      return res
-        .status(400)
-        .json({ success: false, message: 'Empty search term' });
-    }
+  checkEmptyField(term, 'Empty search term');
 
-    const cookies = JSON.parse(req.cookies.ugCookies || '[]');
+  const cookies = JSON.parse(req.cookies.ugCookies || '[]');
+  const data = await fastSearchUGservice(term, locale, cookies);
 
-    const data = await fastSearchUGservice(term, locale, cookies);
-
-    res.json({ success: true, data });
-  } catch (error) {
-    console.error('Error in fastSearchUG:', error.message);
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
+  res.json({ success: true, data });
+});

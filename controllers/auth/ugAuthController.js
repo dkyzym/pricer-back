@@ -2,35 +2,24 @@ import {
   loginUGservice,
   logoutUGservice,
 } from '#services/auth/ugAuthService.js';
+import { setCookie, clearCookie } from '#utils/cookieHelpers.js';
 
 export const loginUG = async (req, res) => {
-  try {
-    const { username, password } = req.body;
+  const { username, password } = req.body;
 
-    const cookies = await loginUGservice(username, password);
+  const cookies = await loginUGservice(username, password);
 
-    res.cookie('ugCookies', JSON.stringify(cookies), {
-      httpOnly: true,
-    });
+  setCookie(res, 'ugCookies', cookies);
 
-    res.json({ success: true, message: 'Logged in to UG Auto Parts' });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
+  res.json({ success: true, message: 'Logged in to UG Auto Parts' });
 };
 
 export const logoutUG = async (req, res) => {
-  try {
-    const cookies = JSON.parse(req.cookies.ugCookies || '[]');
+  const cookies = JSON.parse(req.cookies.ugCookies || '[]');
 
-    await logoutUGservice(cookies);
+  await logoutUGservice(cookies);
 
-    res.clearCookie('ugCookies');
+  clearCookie(res, 'ugCookies');
 
-    res.json({ success: true, message: 'Logged out from UG Auto Parts' });
-  } catch (error) {
-    console.error('Logout from UG error:', error.message);
-
-    res.status(500).json({ success: false, message: error.message });
-  }
+  res.json({ success: true, message: 'Logged out from UG Auto Parts' });
 };
