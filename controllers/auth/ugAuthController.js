@@ -1,8 +1,13 @@
+import {
+  loginUGservice,
+  logoutUGservice,
+} from '#services/auth/ugAuthService.js';
+
 export const loginUG = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    const cookies = await loginToUGService(username, password);
+    const cookies = await loginUGservice(username, password);
 
     res.cookie('ugCookies', JSON.stringify(cookies), {
       httpOnly: true,
@@ -18,7 +23,7 @@ export const logoutUG = async (req, res) => {
   try {
     const cookies = JSON.parse(req.cookies.ugCookies || '[]');
 
-    await logoutFromUGService(cookies);
+    await logoutUGservice(cookies);
 
     res.clearCookie('ugCookies');
 

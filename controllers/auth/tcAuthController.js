@@ -1,8 +1,13 @@
+import {
+  loginTCservice,
+  logoutTCservice,
+} from '#services/auth/turboCarsAuthService.js';
+
 export const loginTC = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    const cookies = await loginToTurboCarsService(username, password);
+    const cookies = await loginTCservice(username, password);
 
     res.cookie('turboCarsCookies', JSON.stringify(cookies), { httpOnly: true });
 
@@ -16,14 +21,12 @@ export const logoutTC = async (req, res) => {
   try {
     const cookies = JSON.parse(req.cookies.turboCarsCookies || '[]');
 
-    await logoutFromTurboCarsService(cookies);
+    await logoutTCservice(cookies);
 
     res.clearCookie('turboCarsCookies');
 
     res.json({ success: true, message: 'Logged out from Turbo Cars' });
   } catch (error) {
-    console.error('Logout from Turbo Cars error:', error.message);
-
     res.status(500).json({ success: false, message: error.message });
   }
 };

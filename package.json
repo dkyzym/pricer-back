@@ -39,6 +39,7 @@
     "#helpers/*": "./helpers/*",
     "#middlewares/*": "./middlewares/*",
     "#models/*": "./models/*",
-    "#config/*": "./config/*"
+    "#config/*": "./config/*",
+    "#utils/*": "./utils/*"
   }
 }
