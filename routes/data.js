@@ -1,12 +1,11 @@
 import express from 'express';
-import {
-  searchCodeTurboCars,
-  searchUG,
-} from '../controllers/dataController.js';
+
+import { searchCodeTC } from '#controllers/data/tcDataController.js';
+import { fastSearchUG } from '#controllers/data/ugFastSearchDataController.js';
 
 const router = express.Router();
 
-router.get('/search-code', searchCodeTurboCars);
-router.get('/search-ug', searchUG);
+router.get('/search-code', searchCodeTC);
+router.get('/search-ug', fastSearchUG);
 
 export default router;
