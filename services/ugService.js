@@ -1,20 +1,33 @@
 import axios from 'axios';
 
-export const searchCodeUGService = async (code, cookies) => {
-  const response = await axios.get(
-    `https://new-supplier.com/search?code=${encodeURIComponent(code)}`,
-    {
-      headers: {
-        Cookie: cookies.join('; '),
-        'Content-Type': 'application/json',
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
-        'Accept-Encoding': 'gzip, deflate, br',
-        Connection: 'keep-alive',
-      },
-    }
-  );
+export const searchUGService = async (term, locale, cookies) => {
+  try {
+    const headers = {
+      Cookie: cookies.join('; '),
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+      Accept: 'application/json, text/javascript, */*; q=0.01',
+      'Accept-Encoding': 'gzip, deflate, br, zstd',
+      'Accept-Language':
+        'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,uk;q=0.6,sr;q=0.5',
+      'X-Requested-With': 'XMLHttpRequest',
+    };
 
-  return response.data;
+    const response = await axios.get(
+      'https://ugautopart.ru/ajax/modules2/search.tips/get',
+      {
+        params: {
+          term: encodeURIComponent(term),
+          locale,
+        },
+        headers: headers,
+        withCredentials: true,
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error('Error in searchUGService:', error.message);
+    throw new Error('Failed to fetch data from UG Auto Parts');
+  }
 };

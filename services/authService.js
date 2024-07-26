@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 import { parseSetCookieHeader } from '../utils/cookieUtils.js';
-import { Credentials } from '../utils/constants.js';
 
 export const loginToTurboCarsService = async (username, password) => {
   const response = await axios.post(
@@ -14,8 +13,6 @@ export const loginToTurboCarsService = async (username, password) => {
       responseType: 'arraybuffer',
     }
   );
-
-  // checkIsLoggedIn(response?.data, Credentials.TurboCarsUserID);
 
   const cookies = parseSetCookieHeader(response.headers['set-cookie']);
   return cookies;
