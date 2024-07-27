@@ -1,41 +1,37 @@
 import axios from 'axios';
-import { parseSetCookieHeader } from '#utils/cookieUtils.js';
 
-// General function to make POST requests
-export const makePostRequest = async (url, data, headers = {}) => {
+export const makePostRequest = async (url, data, headers) => {
   try {
     const response = await axios.post(url, data, {
       headers,
       withCredentials: true,
     });
-    if (response.status !== 200) {
-      throw new Error(`Failed to make POST request to ${url}`);
-    }
-
     return response;
   } catch (error) {
-    console.error(`POST request error: ${error.message}`);
-    throw error;
+    throw new Error(`Failed to make POST request: ${error.message}`);
   }
 };
 
-// General function to make GET requests
-export const makeGetRequest = async (url, headers = {}) => {
+export const makeGetRequest = async (url, headers) => {
   try {
     const response = await axios.get(url, { headers, withCredentials: true });
-    if (response.status !== 200) {
-      throw new Error(`Failed to make GET request to ${url}`);
-    }
-
     return response;
   } catch (error) {
-    console.error(`GET request error: ${error.message}`);
-    throw error;
+    throw new Error(`Failed to make GET request: ${error.message}`);
   }
 };
 
-// General function to parse cookies from response
 export const getCookiesFromResponse = (response) => {
-  const setCookies = response.headers['set-cookie'] || [];
-  return parseSetCookieHeader(setCookies);
+  const setCookieHeader = response.headers['set-cookie'];
+  if (!setCookieHeader) {
+    return [];
+  }
+  // Map to store unique cookies
+  const cookiesMap = new Map();
+  setCookieHeader.forEach((cookie) => {
+    const [nameValue, ...rest] = cookie.split(';');
+    const [name, value] = nameValue.split('=');
+    cookiesMap.set(name, `${name}=${value}`);
+  });
+  return Array.from(cookiesMap.values());
 };

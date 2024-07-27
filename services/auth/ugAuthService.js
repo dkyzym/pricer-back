@@ -1,32 +1,48 @@
-import { defaultHeaders } from '#utils/defaultHeaders.js';
-import {
-  makePostRequest,
-  makeGetRequest,
-  getCookiesFromResponse,
-} from './commonAuthService.js';
+import axios from 'axios';
+import { getCookiesFromResponse } from './commonAuthService.js';
 
-const UG_LOGIN_URL = 'https://ugautopart.ru/';
-const UG_LOGOUT_URL = 'https://ugautopart.ru/?logout';
+import { checkIsLoggedIn } from '#utils/checkIsLoggedIn.js';
+import { Credentials } from '#utils/constants.js';
+import { defaultHeaders, ugLoginHeaders } from '#utils/defaultHeaders.js';
+
+const UG_LOGIN_URL = 'https://ugautopart.ru/?FranchiseeId=3993538';
+const UG_LOGOUT_URL = 'https://ugautopart.ru/?FranchiseeId=3993538&logout';
+const UG_LOGOUT_REDIRECT_URL = 'https://ugautopart.ru/?FranchiseeId=3993538';
 
 export const loginUGservice = async (username, password) => {
-  const data = `login=${encodeURIComponent(username)}&pass=${encodeURIComponent(password)}`;
-  const headers = defaultHeaders;
+  const data = new URLSearchParams();
+  data.append('login', username);
+  data.append('pass', password);
 
-  const response = await makePostRequest(UG_LOGIN_URL, data, headers);
-  return getCookiesFromResponse(response);
+  const headers = ugLoginHeaders;
+
+  const response = await axios.post(UG_LOGIN_URL, data, { headers });
+  const cookies = getCookiesFromResponse(response);
+
+  checkIsLoggedIn(response.data, Credentials.UGID);
+
+  if (!cookies.some((cookie) => cookie.startsWith('ABCPUser'))) {
+    throw new Error('Missing ABCPUser cookie');
+  }
+
+  return cookies;
 };
 
 export const logoutUGservice = async (cookies) => {
   const headers = {
-    Cookie: cookies.join('; '),
-    defaultHeaders,
+    ...defaultHeaders,
+    Referer: 'https://ugautopart.ru/?FranchiseeId=3993538',
   };
 
-  const response = await makeGetRequest(UG_LOGOUT_URL, headers);
-  const newCookies = getCookiesFromResponse(response);
+  await axios.get(UG_LOGOUT_URL, { headers });
 
-  const isLoggedOut = newCookies.some((cookie) =>
-    cookie.includes('PHPSESSID=')
+  const response = await axios.get(UG_LOGOUT_REDIRECT_URL, { headers });
+
+  const newCookies = getCookiesFromResponse(response);
+  console.log('Received cookies on logout:', newCookies);
+
+  const isLoggedOut = newCookies.some(
+    (cookie) => !cookie.includes('ABCPUser=')
   );
 
   if (!isLoggedOut) {
