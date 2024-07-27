@@ -1,5 +1,7 @@
 import { checkIsLoggedIn } from '#utils/checkIsLoggedIn.js';
 import { Credentials } from '#utils/constants.js';
+import { loadHtml } from '#utils/htmlParser.js';
+import { parseRows } from '#utils/rowParser.js';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 
@@ -28,9 +30,8 @@ export const deepSearchUGservice = async (pcode, cookies) => {
 
     checkIsLoggedIn(response.data, Credentials.UGID);
 
-    const $ = cheerio.load(response.data, 'utf-8');
-
-    const data = $('tbody').html();
+    const $ = loadHtml(response.data);
+    const data = parseRows($);
 
     return data;
   } catch (error) {
