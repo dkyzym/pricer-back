@@ -18,7 +18,7 @@ const corsOptions = {
   credentials: true,
 };
 
-app.use(morgan('short'));
+app.use(morgan('combined'));
 app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));

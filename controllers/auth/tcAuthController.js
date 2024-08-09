@@ -8,7 +8,7 @@ export const loginTC = async (req, res) => {
   const { username, password } = req.body;
 
   const cookies = await loginTCservice(username, password);
-  console.log(cookies);
+
   setCookie(res, 'turboCarsCookies', cookies);
 
   res.json({ success: true, message: 'Logged in to Turbo Cars' });
